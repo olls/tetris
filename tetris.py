@@ -38,12 +38,14 @@ def main():
     shape = Shape(SHAPES[random.randint(0, 4)], (0, random.randint(0, 17)))
     game.addSprite(shape)
 
+    shapeNo = 0
     while game.alive:
         print(game)
 
         if contains(shape.edge(game), 2) or shape.touching(game, side=2):
-            shape = Shape(SHAPES[random.randint(0, 4)], (0, random.randint(0, 17)))
+            shape = Shape(SHAPES[random.randint(0, len(SHAPES)-1)], (0, random.randint(0, 17)))
             game.addSprite(shape)
+            shapeNo += 1
         else:
             shape.move(2)
             if random.randint(0, 1):
@@ -54,14 +56,14 @@ def main():
             if random.randint(0, 1):
                 t = random.choice((1, 3))
                 shape.move(t)
-                if (contains(shape.edge(game), 1) or 
-                    contains(shape.edge(game), 3) or 
+                if (contains(shape.edge(game), 1) or
+                    contains(shape.edge(game), 3) or
                     game.overlaps(shape)):
                     if t == 1: shape.move(3)
                     if t == 3: shape.move(1)
 
         time.sleep(.1)
-    time.sleep(1)
+    time.sleep(0.2)
 
     def y():
         return int((console.HEIGHT-5)/2)
@@ -81,5 +83,19 @@ def main():
             line += letter
     print(y()*'\n')
 
+    print(str(no) + '. ' + str(shapeNo )+ ' shapes.')
+    time.sleep(1)
+    return shapeNo
+
 if __name__ == '__main__':
     main()
+    # times = []
+    # no = 0
+    # for i in range(1000):
+    #     times.append(main())
+    #     no += 1
+
+    # print('Avg: ' + str(sum(times) / float(len(times))))
+    # print('Lowest: ' + str(min(float(s) for s in times)))
+    # print('Highest: ' + str(max(float(s) for s in times)))
+    # input()
