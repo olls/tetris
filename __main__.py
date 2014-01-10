@@ -30,17 +30,19 @@ class Tetris(graphics.Canvas):
 
 class Shape(graphics.Sprite):
     def __init__(self, image, pos=(0, 0)):
-        super().__init__(image, pos)
+        super().__init__(image, pos, color=image.n)
 
 def main():
     game = Tetris()
 
-    shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
+    shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, 10))
     game.addSprite(shape)
 
     shapeNo = 0
     lastFrame = time.time()
     lastDownMv = time.time()
+    lastBtn = time.time()
+    start = time.time()
     with NonBlockingInput() as nbi:
         while game.alive:
 
@@ -49,7 +51,7 @@ def main():
                 lastFrame = time.time()
 
             if contains(shape.edge(game), 2) or shape.touching(game, side=2):
-                shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
+                shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, 10))
                 game.addSprite(shape)
                 shapeNo += 1
             else:
@@ -60,20 +62,22 @@ def main():
 
                 ch = nbi.char()
                 # Rotate?
-                if ch == '/':
+                if ch == ' ' and time.time() > lastBtn + 0.05:
+                    lastBtn = time.time()
                     
                     shape.img.rotate(1)
                     if contains(shape.edge(game), 2) or game.overlaps(shape):
                         shape.img.rotate(-1)
 
                 # Move?
-                if ch == ',' or ch == '.' or ch == 'm':
+                if ch == ',' or ch == '/' or ch == '.' and time.time() > lastBtn + 0.05:
+                    lastBtn = time.time()
                     
                     if ch == ',':
                         t = 3
-                    elif ch == '.':
+                    elif ch == '/':
                         t = 1
-                    else:
+                    elif ch == '.':
                         t = 2
                     shape.move(t)
 
@@ -85,12 +89,13 @@ def main():
                         if t == 2: shape.move(0)
                         if t == 3: shape.move(1)
 
-    time.sleep(0.2)
+    totalTime = time.time() - start
+    time.sleep(1)
 
     def y():
-        return int((console.HEIGHT-5)/2)
+        return int((graphics.console.HEIGHT-5)/2)
     def x(len):
-        return int((console.WIDTH-len)/2)
+        return int((graphics.console.WIDTH-len)/2)
 
     text = letters.word('Game Over!')
     line = ''
@@ -105,19 +110,8 @@ def main():
             line += letter
     print(y()*'\n')
 
-    print(str(no) + '. ' + str(shapeNo )+ ' shapes.')
+    print('You scored {score}!'.format( score = int( (totalTime + shapeNo) /2 )) )
     time.sleep(1)
-    return shapeNo
 
 if __name__ == '__main__':
     main()
-    # times = []
-    # no = 0
-    # for i in range(1000):
-    #     times.append(main())
-    #     no += 1
-
-    # print('Avg: ' + str(sum(times) / float(len(times))))
-    # print('Lowest: ' + str(min(float(s) for s in times)))
-    # print('Highest: ' + str(max(float(s) for s in times)))
-    # input()
