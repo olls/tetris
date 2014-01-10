@@ -3,6 +3,7 @@ import random
 
 import letters
 import graphics
+from graphics.nbinput import NonBlockingInput
 import tetrisShapes as tetShapes
 
 def contains(arr, n):
@@ -38,30 +39,41 @@ def main():
     game.addSprite(shape)
 
     shapeNo = 0
-    while game.alive:
-        print(game)
+    with NonBlockingInput() as nbi:
+        while game.alive:
+            print(game)
 
-        if contains(shape.edge(game), 2) or shape.touching(game, side=2):
-            shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
-            game.addSprite(shape)
-            shapeNo += 1
-        else:
-            shape.move(2)
-            if random.randint(0, 1):
-                t = random.choice((-1, 1))
-                shape.img.rotate(t)
-                if contains(shape.edge(game), 2) or game.overlaps(shape):
-                    shape.img.rotate(-t)
-            if random.randint(0, 1):
-                t = random.choice((1, 3))
-                shape.move(t)
-                if (contains(shape.edge(game), 1) or
-                    contains(shape.edge(game), 3) or
-                    game.overlaps(shape)):
-                    if t == 1: shape.move(3)
-                    if t == 3: shape.move(1)
+            if contains(shape.edge(game), 2) or shape.touching(game, side=2):
+                shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
+                game.addSprite(shape)
+                shapeNo += 1
+            else:
+                shape.move(2)
 
-        time.sleep(.1)
+                ch = nbi.char()
+                # Rotate?
+                if ch == '/':
+                    
+                    shape.img.rotate(1)
+                    if contains(shape.edge(game), 2) or game.overlaps(shape):
+                        shape.img.rotate(-1)
+
+                # Move?
+                if ch == ',' or ch == '.':
+                    
+                    if ch == ',':
+                        t = 3
+                    else:
+                        t = 1
+                    shape.move(t)
+
+                    if (contains(shape.edge(game), 1) or
+                        contains(shape.edge(game), 3) or
+                        game.overlaps(shape)):
+                        if t == 1: shape.move(3)
+                        if t == 3: shape.move(1)
+
+            time.sleep(.5)
     time.sleep(0.2)
 
     def y():
