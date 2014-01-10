@@ -39,16 +39,24 @@ def main():
     game.addSprite(shape)
 
     shapeNo = 0
+    lastFrame = time.time()
+    lastDownMv = time.time()
     with NonBlockingInput() as nbi:
         while game.alive:
-            print(game)
+
+            if time.time() > lastFrame + 0.1:
+                print(game)
+                lastFrame = time.time()
 
             if contains(shape.edge(game), 2) or shape.touching(game, side=2):
                 shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
                 game.addSprite(shape)
                 shapeNo += 1
             else:
-                shape.move(2)
+
+                if time.time() > lastDownMv + 0.5:
+                    shape.move(2)
+                    lastDownMv = time.time()
 
                 ch = nbi.char()
                 # Rotate?
@@ -59,21 +67,24 @@ def main():
                         shape.img.rotate(-1)
 
                 # Move?
-                if ch == ',' or ch == '.':
+                if ch == ',' or ch == '.' or ch == 'm':
                     
                     if ch == ',':
                         t = 3
-                    else:
+                    elif ch == '.':
                         t = 1
+                    else:
+                        t = 2
                     shape.move(t)
 
                     if (contains(shape.edge(game), 1) or
+                        contains(shape.edge(game), 2) or
                         contains(shape.edge(game), 3) or
                         game.overlaps(shape)):
                         if t == 1: shape.move(3)
+                        if t == 2: shape.move(0)
                         if t == 3: shape.move(1)
 
-            time.sleep(.5)
     time.sleep(0.2)
 
     def y():
