@@ -1,10 +1,9 @@
 import time
 import random
 
-import console
 import letters
-from graphics import *
-from tetrisShapes import *
+import graphics
+import tetrisShapes as tetShapes
 
 def contains(arr, n):
     try:
@@ -13,9 +12,9 @@ def contains(arr, n):
     except ValueError:
         return False
 
-class Tetris(Canvas):
-    def __init__(self, height=30, width=20, background=' ', color='#'):
-        super().__init__(height, width, background, color)
+class Tetris(graphics.Canvas):
+    def __init__(self, size=(20, 30)):
+        super().__init__(size)
 
     @property
     def alive(self):
@@ -28,14 +27,14 @@ class Tetris(Canvas):
         else:
             return True
 
-class Shape(Sprite):
+class Shape(graphics.Sprite):
     def __init__(self, image, pos=(0, 0)):
         super().__init__(image, pos)
 
 def main():
     game = Tetris()
 
-    shape = Shape(SHAPES[random.randint(0, 4)], (0, random.randint(0, 17)))
+    shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
     game.addSprite(shape)
 
     shapeNo = 0
@@ -43,16 +42,16 @@ def main():
         print(game)
 
         if contains(shape.edge(game), 2) or shape.touching(game, side=2):
-            shape = Shape(SHAPES[random.randint(0, len(SHAPES)-1)], (0, random.randint(0, 17)))
+            shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, random.randint(0, 17)))
             game.addSprite(shape)
             shapeNo += 1
         else:
             shape.move(2)
             if random.randint(0, 1):
                 t = random.choice((-1, 1))
-                shape.rotate(t)
+                shape.img.rotate(t)
                 if contains(shape.edge(game), 2) or game.overlaps(shape):
-                    shape.rotate(-t)
+                    shape.img.rotate(-t)
             if random.randint(0, 1):
                 t = random.choice((1, 3))
                 shape.move(t)
