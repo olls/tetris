@@ -110,7 +110,7 @@ def main():
             line += letter
     print(y()*'\n')
 
-    print('You scored {score}!'.format( score = int( (totalTime + shapeNo) /2 )) )
+    print('You scored {score}!'.format( score = int( (shapeNo / totalTime) *100 )) )
     time.sleep(1)
 
 if __name__ == '__main__':
