@@ -1,4 +1,4 @@
-tetris
+Tetris
 ======
 
 A simple Python terminal implementation of a random Tetris game. This is dependent on my terminal [graphics](https://github.com/olls/graphics) module. Beat my high-score of 222 :)
