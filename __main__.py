@@ -92,10 +92,8 @@ def main():
     totalTime = time.time() - start
     time.sleep(1)
 
-    def y():
-        return int((graphics.console.HEIGHT-5)/2)
-    def x(len):
-        return int((graphics.console.WIDTH-len)/2)
+    y = lambda: int((graphics.console.HEIGHT-5)/2)
+    x = lambda l: int((graphics.console.WIDTH-l)/2)
 
     text = letters.word('Game Over!')
     line = ''
