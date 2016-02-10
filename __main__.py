@@ -21,7 +21,7 @@ class Tetris(graphics.Canvas):
     def alive(self):
         highShapes = 0
         for shape in self.sprites:
-            if shape.position[0] <= 0:
+            if shape.position[1] <= 10:
                 highShapes += 1
         if highShapes > 1:
             return False
