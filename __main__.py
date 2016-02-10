@@ -21,7 +21,7 @@ class Tetris(graphics.Canvas):
     def alive(self):
         highShapes = 0
         for shape in self.sprites:
-            if shape.position[0] <=0:
+            if shape.position[0] <= 0:
                 highShapes += 1
         if highShapes > 1:
             return False
@@ -50,14 +50,14 @@ def main():
                 print(game)
                 lastFrame = time.time()
 
-            if contains(shape.onEdge(game), 2) or shape.touching(game, side=2):
+            if contains(shape.onEdge(game), graphics.BOTTOM) or shape.touching(game, side=graphics.BOTTOM):
                 shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, 10))
                 game.sprites.append(shape)
                 shapeNo += 1
             else:
 
                 if time.time() > lastDownMv + 0.5:
-                    shape.move(2)
+                    shape.move(graphics.DOWN)
                     lastDownMv = time.time()
 
                 ch = nbi.char()
@@ -65,29 +65,22 @@ def main():
                 if ch == ' ' and time.time() > lastBtn + 0.05:
                     lastBtn = time.time()
 
-                    shape.image.rotate(1)
-                    if contains(shape.onEdge(game), 2) or shape.overlaps(game):
-                        shape.image.rotate(-1)
+                    if not contains(shape.onEdge(game), graphics.BOTTOM) and not shape.overlaps(game):
+                        shape.image.rotate(graphics.LEFT)
 
                 # Move?
                 if ch == ',' or ch == '/' or ch == '.' and time.time() > lastBtn + 0.05:
                     lastBtn = time.time()
 
                     if ch == ',':
-                        t = 3
+                        t = graphics.LEFT
                     elif ch == '/':
-                        t = 1
+                        t = graphics.RIGHT
                     elif ch == '.':
-                        t = 2
-                    shape.move(t)
+                        t = graphics.DOWN
 
-                    if (contains(shape.onEdge(game), 1) or
-                        contains(shape.onEdge(game), 2) or
-                        contains(shape.onEdge(game), 3) or
-                        shape.overlaps(game)):
-                        if t == 1: shape.move(3)
-                        if t == 2: shape.move(0)
-                        if t == 3: shape.move(1)
+                    if not contains(shape.onEdge(game), t) and not shape.overlaps(game):
+                        shape.move(t)
 
     totalTime = time.time() - start
     time.sleep(1)
