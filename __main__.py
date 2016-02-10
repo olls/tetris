@@ -65,8 +65,9 @@ def main():
                 if ch == ' ' and time.time() > lastBtn + 0.05:
                     lastBtn = time.time()
 
-                    if not contains(shape.onEdge(game), graphics.BOTTOM) and not shape.overlaps(game):
-                        shape.image.rotate(graphics.LEFT)
+                    shape.image.rotate(graphics.LEFT)
+                    if contains(shape.onEdge(game), graphics.BOTTOM) or shape.overlaps(game):
+                        shape.image.rotate(graphics.RIGHT)
 
                 # Move?
                 if ch == ',' or ch == '/' or ch == '.' and time.time() > lastBtn + 0.05:
@@ -79,8 +80,16 @@ def main():
                     elif ch == '.':
                         t = graphics.DOWN
 
-                    if not contains(shape.onEdge(game), t) and not shape.overlaps(game):
-                        shape.move(t)
+                    shape.move(t)
+
+                    if (contains(shape.onEdge(game), graphics.LEFT) or
+                        contains(shape.onEdge(game), graphics.BOTTOM) or
+                        contains(shape.onEdge(game), graphics.RIGHT) or
+                        shape.overlaps(game)):
+
+                        if t == graphics.LEFT:  shape.move(graphics.RIGHT)
+                        if t == graphics.DOWN:  shape.move(graphics.UP)
+                        if t == graphics.RIGHT: shape.move(graphics.LEFT)
 
     totalTime = time.time() - start
     time.sleep(1)
