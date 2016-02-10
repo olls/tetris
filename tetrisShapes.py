@@ -1,4 +1,4 @@
-from graphics import shapes
+from graphics import shapes, funcs
 
 class Shape(shapes.Image):
     def __init__(self, n):
@@ -6,7 +6,7 @@ class Shape(shapes.Image):
         self.direction = 0
 
     def image(self):
-        return self._rotate((
+        return funcs.rotateImage((
             ((1, 1),
              (1, 1)),
 

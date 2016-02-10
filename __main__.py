@@ -21,7 +21,7 @@ class Tetris(graphics.Canvas):
     def alive(self):
         highShapes = 0
         for shape in self.sprites:
-            if shape.pos[0] <=0:
+            if shape.position[0] <=0:
                 highShapes += 1
         if highShapes > 1:
             return False
@@ -29,14 +29,14 @@ class Tetris(graphics.Canvas):
             return True
 
 class Shape(graphics.Sprite):
-    def __init__(self, image, pos=(0, 0)):
-        super().__init__(image, pos, color=image.n)
+    def __init__(self, image, position=(0, 0)):
+        super().__init__(image, position, color=image.n)
 
 def main():
     game = Tetris()
 
     shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, 10))
-    game.addSprite(shape)
+    game.sprites.append(shape)
 
     shapeNo = 0
     lastFrame = time.time()
@@ -50,9 +50,9 @@ def main():
                 print(game)
                 lastFrame = time.time()
 
-            if contains(shape.edge(game), 2) or shape.touching(game, side=2):
+            if contains(shape.onEdge(game), 2) or shape.touching(game, side=2):
                 shape = Shape(tetShapes.Shape(random.randint(0, 6)), (0, 10))
-                game.addSprite(shape)
+                game.sprites.append(shape)
                 shapeNo += 1
             else:
 
@@ -64,15 +64,15 @@ def main():
                 # Rotate?
                 if ch == ' ' and time.time() > lastBtn + 0.05:
                     lastBtn = time.time()
-                    
-                    shape.img.rotate(1)
-                    if contains(shape.edge(game), 2) or game.overlaps(shape):
-                        shape.img.rotate(-1)
+
+                    shape.image.rotate(1)
+                    if contains(shape.onEdge(game), 2) or shape.overlaps(game):
+                        shape.image.rotate(-1)
 
                 # Move?
                 if ch == ',' or ch == '/' or ch == '.' and time.time() > lastBtn + 0.05:
                     lastBtn = time.time()
-                    
+
                     if ch == ',':
                         t = 3
                     elif ch == '/':
@@ -81,10 +81,10 @@ def main():
                         t = 2
                     shape.move(t)
 
-                    if (contains(shape.edge(game), 1) or
-                        contains(shape.edge(game), 2) or
-                        contains(shape.edge(game), 3) or
-                        game.overlaps(shape)):
+                    if (contains(shape.onEdge(game), 1) or
+                        contains(shape.onEdge(game), 2) or
+                        contains(shape.onEdge(game), 3) or
+                        shape.overlaps(game)):
                         if t == 1: shape.move(3)
                         if t == 2: shape.move(0)
                         if t == 3: shape.move(1)
@@ -92,8 +92,10 @@ def main():
     totalTime = time.time() - start
     time.sleep(1)
 
-    y = lambda: int((graphics.console.HEIGHT-5)/2)
-    x = lambda l: int((graphics.console.WIDTH-l)/2)
+    size = graphics.console.Size().getSize()
+
+    y = lambda: int((size[1]-5)/2)
+    x = lambda l: int((size[0]-l)/2)
 
     text = letters.word('Game Over!')
     line = ''
